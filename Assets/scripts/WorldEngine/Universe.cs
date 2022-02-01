@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Universe
 {
 
     private int turnCount;
     private Player mainPlayer;
-    private Player[] players;
+    private List<Player> players;
+    private List<Planet> planets;
 
     private static Universe universe;
     public static Universe Instance()
@@ -25,12 +27,14 @@ public class Universe
     void Start()
     {
         Debug.Log("Starting Game!");
+        planets = new List<Planet>();
 
         turnCount = 0;
         int playerCount = 4;
-        players = new Player[playerCount];
+        players = new List<Player>();
 
-        for(int i=0; i < players.Length; i++) {
+        // Create players and initial planets
+        for(int i=0; i < playerCount; i++) {
             Player player = null;
             if(i == 0) {
                 player = new Player(i, true);
@@ -38,8 +42,92 @@ public class Universe
             } else {
                 player = new Player(i, false);
             }
-            players[i] = player;
-        }   
+            players.Add(player);
+
+            Planet homePlanet = new Planet(planets.Count);
+            homePlanet.SetExoticRating(3);
+            homePlanet.SetHospitableRating(3);
+            homePlanet.SetWonderfulRating(3);
+            homePlanet.SetResourcefulRating(3);
+            homePlanet.SetOwner(player);
+            planets.Add(homePlanet);
+            player.AddPlanet(homePlanet);
+        }
+
+        // Setup other planets
+        for(int i=0; i < 12; i++) {
+            Planet newPlanet = new Planet(planets.Count);
+            planets.Add(newPlanet);
+        }
+
+        // Setup StarLanes
+        int starLaneCount = 0;
+        for(int i=0; i < planets.Count; i++) {
+            Planet planet1 = planets[i];
+            Planet planet2 = planets[(i + players.Count) % planets.Count];
+            StarLane starLane = new StarLane(planet1, planet2);
+            planet1.AddStarLane(starLane);
+            planet2.AddStarLane(starLane);
+            starLaneCount++;
+        }
+
+        int attempts = 0;
+        while(starLaneCount < (planets.Count * 27) / 20) {
+            attempts++;
+            if(attempts > 10000) {
+                throw new Exception("Could not compute starlanes.");
+            }
+            
+            Planet planet1 = Util.Select(planets);
+
+            if(planet1.StarLanes().Count > 3) {
+                continue;
+            }
+
+            Planet planet2 = Util.Select(planets);
+
+            if(planet2.StarLanes().Count > 3) {
+                continue;
+            }
+
+            // Ensure two chosen planets are not both home planets.
+            if(planet1.Owner() != null && planet2.Owner() != null) {
+                continue;
+            }
+
+            // Ensure star lane hasn't already been created.
+            bool invalid = false;
+            foreach(StarLane planet2StarLane in planet2.StarLanes()) {
+                if(planet2StarLane.Contains(planet1)) {
+                    invalid = true;
+                    break;
+                }
+            }
+            if(invalid) {
+                continue;
+            }
+
+            StarLane starLane = new StarLane(planet1, planet2);
+            planet1.AddStarLane(starLane);
+            planet2.AddStarLane(starLane);
+            starLaneCount++;    
+        }
+
+        /*
+        foreach(Planet planet in planets) {
+            Debug.Log("");
+            Debug.Log("");
+            Debug.Log(planet.Name());
+            Debug.Log("Exotic: " + planet.ExoticRating() + " / " + planet.ExoticCap());
+            Debug.Log("Hospitable: " + planet.HospitableRating() + " / " + planet.HospitableCap());
+            Debug.Log("Wonderful: " + planet.WonderfulRating() + " / " + planet.WonderfulCap());
+            Debug.Log("Resourceful: " + planet.ResourcefulRating() + " / " + planet.ResourcefulCap());
+            foreach(StarLane starLane in planet.StarLanes()) {
+                Planet neighbor = starLane.Neighbor(planet);
+                Debug.Log("Neighbor: " + neighbor.Name());
+            }
+        }
+        */
     }
 
     public Player MainPlayer() {
