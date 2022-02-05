@@ -54,6 +54,7 @@ public class Planet : IBaseObject
     private int baseDefenseRating; // Lowers other ratings
     private List<StarLane> starLanes; // Number of connected planets, raises defense
     private Player owner;
+    private PlanetSprite planetSprite;
 
     public Planet(int planetId) {
         string name = Util.GeneratePlanetName();
@@ -77,6 +78,10 @@ public class Planet : IBaseObject
         this.currentResourceful = this.baseTerrain.GetBaseResourceElements();
 
         this.starLanes = new List<StarLane>();
+
+        // Create UI element
+
+        this.planetSprite = PlanetSprite.Create("planet-" + this.planetId);
     }
 
     public int Id() {
