@@ -10,6 +10,7 @@ public class PlanetSprite : MonoBehaviour {
 
     private GameObject me;
     private string objectName;
+    private Vector3 position;
 
     public static PlanetSprite Create(string objectName) {
         GameObject ParentPanel = GameObject.Find("MapPanel");
@@ -20,9 +21,21 @@ public class PlanetSprite : MonoBehaviour {
 
     public void SetName(string objectName) {
         this.objectName = objectName;
+
+        /*
         if(me != null) {
             me.name = objectName;
         }
+        */
+    }
+
+    public void SetPosition(double x, double y) {
+        this.position = new Vector3((float)x, (float)y, 0);
+        /*
+        if(me != null) {
+            me.transform.position = this.position;
+        }
+        */
     }
 
     private static string BASE_PLANET_DIRPATH = "Assets/Resources/sprites/planets";
@@ -36,6 +49,17 @@ public class PlanetSprite : MonoBehaviour {
             me.name = objectName;
         }
 
+        /*
+        Debug.Log("Setting position?");
+        if(this.position != null) {
+            RectTransform rectTransform = me.GetComponent<RectTransform>();
+            rectTransform.transform.position = this.position;
+            //me.transform.Translate(this.position);
+            Debug.Log("Setting position!!");
+            Debug.Log(rectTransform.transform.position);
+        }
+        */
+
         GameObject ParentPanel = GameObject.Find("MapPanel");
         string countStr = "" + BASE_PLANET_COUNT;
         if(BASE_PLANET_COUNT < 10) {
@@ -48,7 +72,27 @@ public class PlanetSprite : MonoBehaviour {
         //GameObject newObj = new GameObject(); //Create the GameObject
         Image newImage = me.AddComponent<Image>(); //Add the Image Component script
         newImage.sprite = sprite; //Set the Sprite of the Image Component on the new GameObject
-        me.GetComponent<RectTransform>().SetParent(ParentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
+
+        RectTransform rectTransform = me.GetComponent<RectTransform>();
+        rectTransform.SetParent(ParentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
+        
+        rectTransform.Translate(new Vector3(100,100,0)); // TODO FIX TRANSFORM TRANSLATE
+        //rectTransform.transform.position = new Vector3(0,0,0); // TODO FIX TRANSFORM TRANSLATE
+
         me.SetActive(true); //Activate the GameObject
     }
+
+    /*
+    void Update()
+    {
+        Debug.Log("Setting position?");
+        if(this.position != null) {
+            RectTransform rectTransform = me.GetComponent<RectTransform>();
+            rectTransform.transform.position = this.position;
+            //me.transform.Translate(this.position);
+            Debug.Log("Setting position!!");
+            Debug.Log(rectTransform.transform.position);
+        }
+    }
+    */
 }

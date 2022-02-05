@@ -158,4 +158,8 @@ public class Planet : IBaseObject
     public void SetResourcefulRating(int rating) {
         currentResourceful = rating;
     }
+
+    public void SetPosition(double x, double y) {
+        planetSprite.SetPosition(x, y);
+    }
 }
