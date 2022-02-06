@@ -11,12 +11,20 @@ public class PlanetSprite : MonoBehaviour {
     private GameObject me;
     private string objectName;
     private Vector3 position;
+    private Planet planet;
 
-    public static PlanetSprite Create(string objectName) {
+    public static PlanetSprite Create(Planet planet) {
+        string objectName = "planet-" + planet.Id();
+
         GameObject ParentPanel = GameObject.Find("MapPanel");
         PlanetSprite planetSprite = ParentPanel.AddComponent(typeof(PlanetSprite)) as PlanetSprite;
+        planetSprite.SetPlanet(planet);
         planetSprite.SetName(objectName);
         return planetSprite;
+    }
+
+    public void SetPlanet(Planet planet) {
+        this.planet = planet;
     }
 
     public void SetName(string objectName) {
@@ -60,7 +68,7 @@ public class PlanetSprite : MonoBehaviour {
         }
         */
 
-        GameObject ParentPanel = GameObject.Find("MapPanel");
+        GameObject parentPanel = GameObject.Find("MapPanel");
         string countStr = "" + BASE_PLANET_COUNT;
         if(BASE_PLANET_COUNT < 10) {
             countStr = "0" + BASE_PLANET_COUNT;
@@ -69,30 +77,32 @@ public class PlanetSprite : MonoBehaviour {
         Sprite sprite = IMG2Sprite.LoadNewSprite(planetFilepath);
         BASE_PLANET_COUNT++;
 
-        //GameObject newObj = new GameObject(); //Create the GameObject
         Image newImage = me.AddComponent<Image>(); //Add the Image Component script
         newImage.sprite = sprite; //Set the Sprite of the Image Component on the new GameObject
 
         RectTransform rectTransform = me.GetComponent<RectTransform>();
-        rectTransform.SetParent(ParentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
+        rectTransform.SetParent(parentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
         
-        rectTransform.Translate(new Vector3(100,100,0)); // TODO FIX TRANSFORM TRANSLATE
-        //rectTransform.transform.position = new Vector3(0,0,0); // TODO FIX TRANSFORM TRANSLATE
+        RectTransform parentTransform = parentPanel.GetComponent<RectTransform>();
+        Vector3[] parentCorners = new Vector3[4];
+        parentTransform.GetLocalCorners(parentCorners);
+        float parentHeight = parentCorners[1].y - parentCorners[0].y;
+        float parentWidth = parentCorners[3].x - parentCorners[0].x;
+        rectTransform.localPosition = new Vector3((position.x-0.5F)*parentWidth, (position.y-0.5F)*parentHeight, 0);
+
+        rectTransform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
+
+        this.AddText(me);
 
         me.SetActive(true); //Activate the GameObject
     }
 
-    /*
-    void Update()
-    {
-        Debug.Log("Setting position?");
-        if(this.position != null) {
-            RectTransform rectTransform = me.GetComponent<RectTransform>();
-            rectTransform.transform.position = this.position;
-            //me.transform.Translate(this.position);
-            Debug.Log("Setting position!!");
-            Debug.Log(rectTransform.transform.position);
-        }
+    private void AddText(GameObject parent) {
+        GameObject planetText = new GameObject("planet-text-" + planet.Id());
+        planetText.transform.SetParent(parent.transform);
+
+        planetText.AddComponent<Text>().text = planet.Name();
+        planetText.GetComponent<Text>().font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+        planetText.transform.localPosition = new Vector3(0,0,0);
     }
-    */
 }

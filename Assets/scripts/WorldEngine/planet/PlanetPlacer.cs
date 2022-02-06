@@ -19,13 +19,13 @@ public class PlanetPlacer
         int planetPlayerCount = 0;
         foreach(Planet planet in playerPlanets) {
             if(planetPlayerCount == 0) {
-                planetCoordinates[planet] = (0, 0);
+                planetCoordinates[planet] = (0.1, 0.1);
             } else if(planetPlayerCount == 1) {
-                planetCoordinates[planet] = (0, 1);
+                planetCoordinates[planet] = (0.1, 0.9);
             } else if(planetPlayerCount == 2) {
-                planetCoordinates[planet] = (1, 1);
+                planetCoordinates[planet] = (0.9, 0.9);
             } else if(planetPlayerCount == 3) {
-                planetCoordinates[planet] = (1, 0);
+                planetCoordinates[planet] = (0.9, 0.1);
             } else {
                 throw new Exception("Too many players.");
             }
@@ -71,13 +71,98 @@ public class PlanetPlacer
             }
         }
 
+        int LOOPS = 1;
+        // Loop through all Star Lanes and pull planets closer that are too far apart.
+        for(int i=0; i < LOOPS; i++) {
+            Dictionary<Planet, (double, double)> updatePlanetCoordinates = new Dictionary<Planet, (double, double)>();
+            foreach(Planet planet in normalizedPlanetCoordinates.Keys) {
+                updatePlanetCoordinates[planet] = (0.0,0.0);
+            }
+
+            double PULL_FACTOR = 0.5;
+            double PULL_POWER = 1.2; //0.1;
+            foreach(Planet planet in normalizedPlanetCoordinates.Keys) {
+                if(planet.Owner() == null) {
+                    foreach(StarLane starLane in planet.StarLanes()) {
+                        Planet neighbor = starLane.Neighbor(planet);
+                        double xDiff = normalizedPlanetCoordinates[planet].Item1 - normalizedPlanetCoordinates[neighbor].Item1;
+                        double yDiff = normalizedPlanetCoordinates[planet].Item2 - normalizedPlanetCoordinates[neighbor].Item2;
+                        double distance = Math.Max(0.001, Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+
+                        if(distance > 0.3) {
+                            double xUpdate = -1 * Math.Pow(distance, PULL_POWER) * Math.Cos(xDiff / distance) * PULL_FACTOR;
+                            double yUpdate = -1 * Math.Pow(distance, PULL_POWER) * Math.Sin(yDiff / distance) * PULL_FACTOR;
+
+                            double xNew = updatePlanetCoordinates[planet].Item1 + xUpdate;
+                            double yNew = updatePlanetCoordinates[planet].Item2 + yUpdate;
+                            updatePlanetCoordinates[planet] = (xNew, yNew);
+                        }
+                    }
+                }
+            }
+
+            int LOOP2 = 1;
+            if(i == LOOPS - 1) {
+                LOOP2 = 3;
+            }
+            for(int j=0; j < LOOP2; j++) {
+                // Loop through all planet pairs and push them apart. (Warning O^2 time)
+                double MIN_DISTANCE_PUSH_FACTOR = 0.04;
+                    foreach(Planet planet1 in normalizedPlanetCoordinates.Keys) {
+                        foreach(Planet planet2 in normalizedPlanetCoordinates.Keys) {
+                            if(planet1.Owner() == null && planet1.Id() != planet2.Id()) {
+                                double xDiff = normalizedPlanetCoordinates[planet1].Item1 - normalizedPlanetCoordinates[planet2].Item1;
+                                double yDiff = normalizedPlanetCoordinates[planet1].Item2 - normalizedPlanetCoordinates[planet2].Item2;
+                                double distance = Math.Max(0.001, Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+
+                                if(distance < 0.1) {
+                                    Debug.Log("Pushing " + planet1.Name() + " from " + planet2.Name());
+                                    double xUpdate = MIN_DISTANCE_PUSH_FACTOR * Math.Cos(xDiff / distance);
+                                    double yUpdate = MIN_DISTANCE_PUSH_FACTOR * Math.Sin(yDiff / distance);
+
+                                    double xNew = updatePlanetCoordinates[planet1].Item1 + xUpdate;
+                                    double yNew = updatePlanetCoordinates[planet1].Item2 + yUpdate;
+                                    updatePlanetCoordinates[planet1] = (xNew, yNew);
+                                }
+                            }
+                        }
+                    }
+                
+
+                foreach(Planet planet in updatePlanetCoordinates.Keys) {
+                    if(planet.Owner() == null) {
+                        double xNew = normalizedPlanetCoordinates[planet].Item1 + updatePlanetCoordinates[planet].Item1 + 0.08*Util.Random().NextDouble();
+                        double yNew = normalizedPlanetCoordinates[planet].Item2 + updatePlanetCoordinates[planet].Item2 + 0.08*Util.Random().NextDouble();
+                        if(xNew < 0) {
+                            xNew = 0.2*Util.Random().NextDouble();
+                        }
+                        if(xNew > 1) {
+                            xNew = 1 - 0.2*Util.Random().NextDouble();
+                        }
+                        if(yNew < 0) {
+                            yNew = 0.2*Util.Random().NextDouble();
+                        }
+                        if(yNew > 1) {
+                            yNew = 1 - 0.2*Util.Random().NextDouble();
+                        }
+                        normalizedPlanetCoordinates[planet] = (xNew, yNew);
+                    }
+                }
+            }
+        }
+
+        Debug.Log("Planet coordinates:");
+        foreach(Planet planet in normalizedPlanetCoordinates.Keys) {
+            Debug.Log(planet.Name() + "|  " + normalizedPlanetCoordinates[planet].Item1 + " :: " + normalizedPlanetCoordinates[planet].Item2);
+        }
+
         return normalizedPlanetCoordinates;
     }
 
     // Returns a normalized distance for each planet to the base planet from 0 to 1.
     private static Dictionary<Planet, double> ComputeDistance(Planet basePlanet) {
         double SPREAD_FACTOR = 1.0;
-        int DENSE_COUNT = 3;
+        //int DENSE_COUNT = 3;
 
         int maxDistance = 0;
 
@@ -109,6 +194,9 @@ public class PlanetPlacer
             normalizedDistanceMap[entry.Key] = SPREAD_FACTOR * (double)entry.Value / (double)maxDistance;
         }
 
+        return normalizedDistanceMap;
+
+        /*
         Dictionary<Planet, double> spreadDistanceMap = new Dictionary<Planet, double>();
         foreach(KeyValuePair<Planet, double> entry in normalizedDistanceMap) {
             double distance = entry.Value;
@@ -120,5 +208,6 @@ public class PlanetPlacer
         }
 
         return spreadDistanceMap;
+        */
     }
 }

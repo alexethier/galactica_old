@@ -80,8 +80,7 @@ public class Planet : IBaseObject
         this.starLanes = new List<StarLane>();
 
         // Create UI element
-
-        this.planetSprite = PlanetSprite.Create("planet-" + this.planetId);
+        this.planetSprite = PlanetSprite.Create(this);
     }
 
     public int Id() {
