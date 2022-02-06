@@ -116,11 +116,10 @@ public class Universe
         // Compute Planet Positions
         Dictionary<Planet, (double, double)> planetCoordinates = PlanetPlacer.PlacePlanets(planets);
         foreach(Planet planet in planetCoordinates.Keys) {
-            Debug.Log(planet.Name());
-            Debug.Log(planetCoordinates[planet].Item1 + "-" + planetCoordinates[planet].Item2);
+            //Debug.Log(planet.Name());
+            //Debug.Log(planetCoordinates[planet].Item1 + "-" + planetCoordinates[planet].Item2);
             planet.SetPosition(planetCoordinates[planet].Item1, planetCoordinates[planet].Item2);
         }
-        //
 
         /*
         foreach(Planet planet in planets) {

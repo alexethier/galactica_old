@@ -103,6 +103,10 @@ public class Planet : IBaseObject
         starLanes.Add(starLane);
     }
 
+    public PlanetSprite GetPlanetSprite() {
+        return planetSprite;
+    }
+
     public void SetOwner(Player player) {
         owner = player;
     }
@@ -160,5 +164,8 @@ public class Planet : IBaseObject
 
     public void SetPosition(double x, double y) {
         planetSprite.SetPosition(x, y);
+        foreach(StarLane starLane in starLanes) {
+            starLane.RefreshPosition();
+        }
     }
 }
