@@ -87,9 +87,9 @@ public class PlanetPlacer
                         Planet neighbor = starLane.Neighbor(planet);
                         double xDiff = normalizedPlanetCoordinates[planet].Item1 - normalizedPlanetCoordinates[neighbor].Item1;
                         double yDiff = normalizedPlanetCoordinates[planet].Item2 - normalizedPlanetCoordinates[neighbor].Item2;
-                        double distance = Math.Max(0.001, Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+                        double distance = Math.Max(0.00001, Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
 
-                        if(distance > 0.3) {
+                        if(distance > 0.2) {
                             double xUpdate = -1 * Math.Pow(distance, PULL_POWER) * Math.Cos(xDiff / distance) * PULL_FACTOR;
                             double yUpdate = -1 * Math.Pow(distance, PULL_POWER) * Math.Sin(yDiff / distance) * PULL_FACTOR;
 
@@ -101,24 +101,27 @@ public class PlanetPlacer
                 }
             }
 
+            double MIN_DISTANCE_PUSH_FACTOR = 0.5;
+            double MIN_DISTANCE = 0.2;
+
             int LOOP2 = 1;
             if(i == LOOPS - 1) {
                 LOOP2 = 3;
             }
             for(int j=0; j < LOOP2; j++) {
                 // Loop through all planet pairs and push them apart. (Warning O^2 time)
-                double MIN_DISTANCE_PUSH_FACTOR = 0.04;
                     foreach(Planet planet1 in normalizedPlanetCoordinates.Keys) {
                         foreach(Planet planet2 in normalizedPlanetCoordinates.Keys) {
                             if(planet1.Owner() == null && planet1.Id() != planet2.Id()) {
                                 double xDiff = normalizedPlanetCoordinates[planet1].Item1 - normalizedPlanetCoordinates[planet2].Item1;
                                 double yDiff = normalizedPlanetCoordinates[planet1].Item2 - normalizedPlanetCoordinates[planet2].Item2;
-                                double distance = Math.Max(0.001, Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+                                double distance = Math.Max(0.00001, Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
 
-                                if(distance < 0.1) {
-                                    Debug.Log("Pushing " + planet1.Name() + " from " + planet2.Name());
-                                    double xUpdate = MIN_DISTANCE_PUSH_FACTOR * Math.Cos(xDiff / distance);
-                                    double yUpdate = MIN_DISTANCE_PUSH_FACTOR * Math.Sin(yDiff / distance);
+                                if(distance < MIN_DISTANCE) {
+                                    Debug.Log("Close: " + normalizedPlanetCoordinates[planet1].Item1  + "," + normalizedPlanetCoordinates[planet1].Item2 + " and " + normalizedPlanetCoordinates[planet2].Item1 + "," + normalizedPlanetCoordinates[planet2].Item2);
+                                    double xUpdate = MIN_DISTANCE_PUSH_FACTOR * Math.Cos(xDiff / distance) * (MIN_DISTANCE-distance);
+                                    double yUpdate = MIN_DISTANCE_PUSH_FACTOR * Math.Sin(yDiff / distance) * (MIN_DISTANCE-distance);
+                                    Debug.Log("Pushing " + planet1.Name() + " from " + planet2.Name() + " with current distance: " + distance + " amount: " + xUpdate + " " + yUpdate);
 
                                     double xNew = updatePlanetCoordinates[planet1].Item1 + xUpdate;
                                     double yNew = updatePlanetCoordinates[planet1].Item2 + yUpdate;

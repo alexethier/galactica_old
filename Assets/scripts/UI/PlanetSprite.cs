@@ -14,7 +14,7 @@ public class PlanetSprite : MonoBehaviour {
     private Planet planet;
 
     public static PlanetSprite Create(Planet planet) {
-        string objectName = "planet-" + planet.Id();
+        string objectName = "planet-" + planet.Name();
 
         GameObject ParentPanel = GameObject.Find("MapPanel");
         PlanetSprite planetSprite = ParentPanel.AddComponent(typeof(PlanetSprite)) as PlanetSprite;
@@ -98,7 +98,7 @@ public class PlanetSprite : MonoBehaviour {
     }
 
     private void AddText(GameObject parent) {
-        GameObject planetText = new GameObject("planet-text-" + planet.Id());
+        GameObject planetText = new GameObject("planet-text-" + planet.Name());
         planetText.transform.SetParent(parent.transform);
 
         planetText.AddComponent<Text>().text = planet.Name();
