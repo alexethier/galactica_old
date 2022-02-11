@@ -17,7 +17,10 @@ public class ResourceLabel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.getGameObject("Resources Label Text").text = string.Format("Money: {0}", Universe.Instance().MainPlayer().Resources().Money());
+        // It's possible the label exists (during development/debugging) before the main player has been created.
+        if(Universe.Instance().MainPlayer() != null) {
+            this.getGameObject("Resources Label Text").text = string.Format("Money: {0}", Universe.Instance().MainPlayer().Resources().Money());
+        }
     }
 
     private TextMeshProUGUI getGameObject(string findtext) {

@@ -33,7 +33,11 @@ public class Universe
         int playerCount = 4;
         players = new List<Player>();
 
+        GalaxyBuilder galaxyBuilder = new GalaxyBuilder();
+        galaxyBuilder.Build(20);
+
         // Create players and initial planets
+        /*
         for(int i=0; i < playerCount; i++) {
             Player player = null;
             if(i == 0) {
@@ -120,6 +124,7 @@ public class Universe
             //Debug.Log(planetCoordinates[planet].Item1 + "-" + planetCoordinates[planet].Item2);
             planet.SetPosition(planetCoordinates[planet].Item1, planetCoordinates[planet].Item2);
         }
+        */
 
         /*
         foreach(Planet planet in planets) {
