@@ -13,9 +13,10 @@ public class StarLaneLine : MonoBehaviour
     private LineRenderer line; // Line Renderer
 
     public static StarLaneLine Create(StarLane starLane) {
-        GameObject ParentPanel = GameObject.Find("MapPanel");
-        StarLaneLine starLaneLine = ParentPanel.AddComponent(typeof(StarLaneLine)) as StarLaneLine;
-
+        GameObject parentPanel = GameObject.Find("MapPanel");
+        StarLaneLine starLaneLine = parentPanel.AddComponent(typeof(StarLaneLine)) as StarLaneLine;
+        //starLaneLine.transform.SetParent(parentPanel.transform);
+        //starLaneLine.SetParent(parentPanel);
         starLaneLine.SetPlanet1(starLane.Planet1());
         starLaneLine.SetPlanet2(starLane.Planet2());
 
@@ -33,35 +34,58 @@ public class StarLaneLine : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Color color = new Color(0.3f, 0.4f, 0.9f, 0.8f);
+
         me = new GameObject();
+        GameObject parentPanel = GameObject.Find("MapPanel");
         me.name = "starlane-" + planet1.Name() + "-" + planet2.Name();
         // Add a Line Renderer to the GameObject
         line = me.AddComponent<LineRenderer>();
         // Set the width of the Line Renderer
-        line.startWidth = 0.05F;
-        line.endWidth = 0.05F;
+        line.startColor = color;
+        line.endColor = color;
+        line.startWidth = 1F;//0.05F;
+        line.endWidth = 1F;//0.05F;
         // Set the number of vertex for the Line Renderer
         line.positionCount = 2;
+        line.useWorldSpace = true;    
 
         // More Configs
-        line.sortingOrder = 1;
-        line.material = new Material (Shader.Find ("Sprites/Default"));
-        line.material.color = Color.red; 
+        line.material = new Material (Shader.Find("Sprites/Default"));
+        line.material.color = color;
+
+        
+        line.SetPosition(0, planet1.GetPlanetSprite().transform.position);
+        line.SetPosition(1, planet2.GetPlanetSprite().transform.position);
+        Debug.Log(me.name + ": " + planet1.GetPlanetSprite().transform.position);
+        Debug.Log(me.name + ": " + planet2.GetPlanetSprite().transform.position);
+        
+
+        //me.SetParent(parentPanel);
+        //RectTransform rectTransform = me.GetComponent<RectTransform>();
+        //rectTransform.SetParent(parentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
+        //RectTransform parentTransform = parentPanel.GetComponent<RectTransform>();
+        me.transform.SetParent(parentPanel.transform);
+
+        this.RefreshPosition();
     }
 
     public void RefreshPosition() {
+        if(line != null) {
 
-        try {
             PlanetSprite planet1Sprite = planet1.GetPlanetSprite();
             PlanetSprite planet2Sprite = planet2.GetPlanetSprite();
 
             if(planet1Sprite.transform != null && planet2Sprite.transform != null) {
+
                 // Update position of the two vertex of the Line Renderer
-                line.SetPosition(0, planet1Sprite.transform.position);
-                line.SetPosition(1, planet2Sprite.transform.position);
+                line.SetPosition(0, planet1Sprite.GetGameObject().transform.position);
+                line.SetPosition(1, planet2Sprite.GetGameObject().transform.position);
+
+                Debug.Log(me.name + " set position to: " + planet1Sprite.GetGameObject().transform.position);
+                Debug.Log(me.name + " set position to: " + planet2Sprite.GetGameObject().transform.position);
             }
-        } catch(Exception e) {
-            //pass
         }
+
     }
 }

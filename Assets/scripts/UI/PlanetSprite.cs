@@ -16,8 +16,8 @@ public class PlanetSprite : MonoBehaviour {
     public static PlanetSprite Create(Planet planet) {
         string objectName = "planet-" + planet.Name();
 
-        GameObject ParentPanel = GameObject.Find("MapPanel");
-        PlanetSprite planetSprite = ParentPanel.AddComponent(typeof(PlanetSprite)) as PlanetSprite;
+        GameObject parentPanel = GameObject.Find("MapPanel");
+        PlanetSprite planetSprite = parentPanel.AddComponent(typeof(PlanetSprite)) as PlanetSprite;
         planetSprite.SetPlanet(planet);
         planetSprite.SetName(objectName);
         return planetSprite;
@@ -46,6 +46,16 @@ public class PlanetSprite : MonoBehaviour {
         */
     }
 
+    /*
+    public Vector3 Position() {
+        return this.position;
+    }
+    */
+
+    public GameObject GetGameObject() {
+        return me;
+    }
+
     private static string BASE_PLANET_DIRPATH = "Assets/Resources/sprites/planets";
     private static int BASE_PLANET_COUNT = 1;
 
@@ -56,17 +66,6 @@ public class PlanetSprite : MonoBehaviour {
         if(this.objectName != null) {
             me.name = objectName;
         }
-
-        /*
-        Debug.Log("Setting position?");
-        if(this.position != null) {
-            RectTransform rectTransform = me.GetComponent<RectTransform>();
-            rectTransform.transform.position = this.position;
-            //me.transform.Translate(this.position);
-            Debug.Log("Setting position!!");
-            Debug.Log(rectTransform.transform.position);
-        }
-        */
 
         GameObject parentPanel = GameObject.Find("MapPanel");
         string countStr = "" + BASE_PLANET_COUNT;

@@ -118,10 +118,10 @@ public class PlanetPlacer
                                 double distance = Math.Max(0.00001, Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
 
                                 if(distance < MIN_DISTANCE) {
-                                    Debug.Log("Close: " + normalizedPlanetCoordinates[planet1].Item1  + "," + normalizedPlanetCoordinates[planet1].Item2 + " and " + normalizedPlanetCoordinates[planet2].Item1 + "," + normalizedPlanetCoordinates[planet2].Item2);
+                                    //Debug.Log("Close: " + normalizedPlanetCoordinates[planet1].Item1  + "," + normalizedPlanetCoordinates[planet1].Item2 + " and " + normalizedPlanetCoordinates[planet2].Item1 + "," + normalizedPlanetCoordinates[planet2].Item2);
                                     double xUpdate = MIN_DISTANCE_PUSH_FACTOR * Math.Cos(xDiff / distance) * (MIN_DISTANCE-distance);
                                     double yUpdate = MIN_DISTANCE_PUSH_FACTOR * Math.Sin(yDiff / distance) * (MIN_DISTANCE-distance);
-                                    Debug.Log("Pushing " + planet1.Name() + " from " + planet2.Name() + " with current distance: " + distance + " amount: " + xUpdate + " " + yUpdate);
+                                    //Debug.Log("Pushing " + planet1.Name() + " from " + planet2.Name() + " with current distance: " + distance + " amount: " + xUpdate + " " + yUpdate);
 
                                     double xNew = updatePlanetCoordinates[planet1].Item1 + xUpdate;
                                     double yNew = updatePlanetCoordinates[planet1].Item2 + yUpdate;
@@ -154,10 +154,10 @@ public class PlanetPlacer
             }
         }
 
-        Debug.Log("Planet coordinates:");
-        foreach(Planet planet in normalizedPlanetCoordinates.Keys) {
-            Debug.Log(planet.Name() + "|  " + normalizedPlanetCoordinates[planet].Item1 + " :: " + normalizedPlanetCoordinates[planet].Item2);
-        }
+        //Debug.Log("Planet coordinates:");
+        //foreach(Planet planet in normalizedPlanetCoordinates.Keys) {
+        //    Debug.Log(planet.Name() + "|  " + normalizedPlanetCoordinates[planet].Item1 + " :: " + normalizedPlanetCoordinates[planet].Item2);
+        //}
 
         return normalizedPlanetCoordinates;
     }
