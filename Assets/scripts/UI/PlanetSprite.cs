@@ -46,11 +46,9 @@ public class PlanetSprite : MonoBehaviour {
         */
     }
 
-    /*
     public Vector3 Position() {
         return this.position;
     }
-    */
 
     public GameObject GetGameObject() {
         return me;

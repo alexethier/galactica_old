@@ -57,8 +57,8 @@ public class StarLaneLine : MonoBehaviour
         
         line.SetPosition(0, planet1.GetPlanetSprite().transform.position);
         line.SetPosition(1, planet2.GetPlanetSprite().transform.position);
-        Debug.Log(me.name + ": " + planet1.GetPlanetSprite().transform.position);
-        Debug.Log(me.name + ": " + planet2.GetPlanetSprite().transform.position);
+        //Debug.Log(me.name + ": " + planet1.GetPlanetSprite().transform.position);
+        //Debug.Log(me.name + ": " + planet2.GetPlanetSprite().transform.position);
         
 
         //me.SetParent(parentPanel);
