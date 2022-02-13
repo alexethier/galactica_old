@@ -109,6 +109,7 @@ public class Planet : IBaseObject
 
     public void SetOwner(Player player) {
         owner = player;
+        planetSprite.SetTextColor(player.Color());
     }
 
     // Terrain Getters

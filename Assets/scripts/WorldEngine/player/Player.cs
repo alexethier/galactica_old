@@ -5,23 +5,25 @@ using UnityEngine;
 public class Player : IBaseObject
 {
     private int playerId;
+    private Color color;
     private string name;
     private bool isMain;
     private bool isAlive;
     private PlayerResources resources;
     private List<Planet> planets;
 
-    public Player(int playerId, bool isMain) {
+    public Player(int playerId, Color color, bool isMain) {
         string playerName = Util.GeneratePlayerName();
-        this.init(playerId, playerName, isMain);
+        this.init(playerId, color, playerName, isMain);
     }
 
-    public Player(int playerId, string name, bool isMain) {
-        this.init(playerId, name, isMain);
+    public Player(int playerId, Color color, string name, bool isMain) {
+        this.init(playerId, color, name, isMain);
     }
 
-    private void init(int playerId, string name, bool isMain) {
+    private void init(int playerId, Color color, string name, bool isMain) {
         this.playerId = playerId;
+        this.color = color;
         this.name = name;
         this.isMain = isMain;
         this.isAlive = true;
@@ -31,6 +33,10 @@ public class Player : IBaseObject
 
     public int Id() {
         return playerId;
+    }
+
+    public Color Color() {
+        return color;
     }
 
     public PlayerResources Resources() {
@@ -47,6 +53,10 @@ public class Player : IBaseObject
         }
 
         this.applyNextTurnResources();
+    }
+
+    public string Name() {
+        return name;
     }
 
     private void TakeTurn() {

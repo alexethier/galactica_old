@@ -82,8 +82,8 @@ public class StarLaneLine : MonoBehaviour
                 line.SetPosition(0, planet1Sprite.GetGameObject().transform.position);
                 line.SetPosition(1, planet2Sprite.GetGameObject().transform.position);
 
-                Debug.Log(me.name + " set position to: " + planet1Sprite.GetGameObject().transform.position);
-                Debug.Log(me.name + " set position to: " + planet2Sprite.GetGameObject().transform.position);
+                //Debug.Log(me.name + " set position to: " + planet1Sprite.GetGameObject().transform.position);
+                //Debug.Log(me.name + " set position to: " + planet2Sprite.GetGameObject().transform.position);
             }
         }
 

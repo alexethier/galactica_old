@@ -13,7 +13,7 @@ public class Util
         return selectedAdjective + " " + selectedName;
     }
 
-    private static List<string> PLANET_NAMES = new List<string>{ "Onterra", "Zeshera", "Pandora", "Oceana", "Axios", "Consul", "Zomg", "Orange", "Gargantua", "Splint", "Semaphore", "Boroque", "Bottle", "Yapple", "Scorn", "Arrakis", "Caladan", "New Terra", "Terminus", "Klendathu" };
+    private static List<string> PLANET_NAMES = new List<string>{ "Fortran", "Kobol", "Kanban", "Holy Ceramide", "Scrum", "Plaxis", "Neo Gootopia", "Pandora", "Oceana", "Axios", "Consul", "Zet", "Gargantua", "Splint", "Semaphore", "Boroque", "Meeseeks", "Glorp", "Yapple", "Scorn", "Arrakis", "Caladan", "New Terra", "Terminus", "Klendathu" };
     private static HashSet<string> chosenNames = new HashSet<string>();
     public static string GeneratePlanetName() {
         string selectedName = PLANET_NAMES[Util.Random().Next(PLANET_NAMES.Count)];

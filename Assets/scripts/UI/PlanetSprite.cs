@@ -12,14 +12,15 @@ public class PlanetSprite : MonoBehaviour {
     private string objectName;
     private Vector3 position;
     private Planet planet;
+    private GameObject planetText;
+    private Color textColor;
 
     public static PlanetSprite Create(Planet planet) {
-        string objectName = "planet-" + planet.Name();
-
         GameObject parentPanel = GameObject.Find("MapPanel");
         PlanetSprite planetSprite = parentPanel.AddComponent(typeof(PlanetSprite)) as PlanetSprite;
         planetSprite.SetPlanet(planet);
-        planetSprite.SetName(objectName);
+        planetSprite.SetName("planet-" + planet.Name());
+        planetSprite.SetTextColor(Color.white);
         return planetSprite;
     }
 
@@ -29,21 +30,17 @@ public class PlanetSprite : MonoBehaviour {
 
     public void SetName(string objectName) {
         this.objectName = objectName;
-
-        /*
-        if(me != null) {
-            me.name = objectName;
-        }
-        */
     }
 
     public void SetPosition(double x, double y) {
         this.position = new Vector3((float)x, (float)y, 0);
-        /*
-        if(me != null) {
-            me.transform.position = this.position;
+    }
+
+    public void SetTextColor(Color color) {
+        textColor = color;
+        if(planetText != null && planetText.GetComponent<Text>() != null) {
+            planetText.GetComponent<Text>().color = textColor;
         }
-        */
     }
 
     public Vector3 Position() {
@@ -95,11 +92,16 @@ public class PlanetSprite : MonoBehaviour {
     }
 
     private void AddText(GameObject parent) {
-        GameObject planetText = new GameObject("planet-text-" + planet.Name());
+        planetText = new GameObject("planet-text-" + planet.Name());
         planetText.transform.SetParent(parent.transform);
 
-        planetText.AddComponent<Text>().text = planet.Name();
-        planetText.GetComponent<Text>().font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
-        planetText.transform.localPosition = new Vector3(0,0,0);
+        Text text = planetText.AddComponent<Text>();
+        text.text = planet.Name();
+        text.font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+        text.color = textColor;
+        text.alignment = TextAnchor.MiddleCenter;
+        //planetText.AddComponent<Text>().text = planet.Name();
+        //planetText.GetComponent<Text>().font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+        planetText.transform.localPosition = new Vector3(0,-100,0);
     }
 }
