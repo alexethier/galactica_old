@@ -16,7 +16,7 @@ public class PlanetSprite : MonoBehaviour {
     private Color textColor;
 
     public static PlanetSprite Create(Planet planet) {
-        GameObject parentPanel = GameObject.Find("MapPanel");
+        GameObject parentPanel = GameObject.Find("Map Panel");
         PlanetSprite planetSprite = parentPanel.AddComponent(typeof(PlanetSprite)) as PlanetSprite;
         planetSprite.SetPlanet(planet);
         planetSprite.SetName("planet-" + planet.Name());
@@ -62,7 +62,7 @@ public class PlanetSprite : MonoBehaviour {
             me.name = objectName;
         }
 
-        GameObject parentPanel = GameObject.Find("MapPanel");
+        GameObject parentPanel = GameObject.Find("Map Panel");
         string countStr = "" + BASE_PLANET_COUNT;
         if(BASE_PLANET_COUNT < 10) {
             countStr = "0" + BASE_PLANET_COUNT;

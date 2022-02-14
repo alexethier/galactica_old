@@ -104,7 +104,7 @@ public class CameraControl : MonoBehaviour
         Camera camera = mapCameraObject.AddComponent<Camera>();
         camera.CopyFrom(baseCamera);
         camera.pixelRect = new Rect((1 - this.slide)*this.width, 0, this.slide*this.width, this.height);
-        camera.transform.SetParent(GameObject.Find("MapPanel").transform);
+        camera.transform.SetParent(GameObject.Find("Map Panel").transform);
         float z = mapCameraObject.transform.localPosition.z;
         mapCameraObject.transform.localPosition = new Vector3(0,0,z);
 

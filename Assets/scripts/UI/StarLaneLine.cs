@@ -13,7 +13,7 @@ public class StarLaneLine : MonoBehaviour
     private LineRenderer line; // Line Renderer
 
     public static StarLaneLine Create(StarLane starLane) {
-        GameObject parentPanel = GameObject.Find("MapPanel");
+        GameObject parentPanel = GameObject.Find("Map Panel");
         StarLaneLine starLaneLine = parentPanel.AddComponent(typeof(StarLaneLine)) as StarLaneLine;
         //starLaneLine.transform.SetParent(parentPanel.transform);
         //starLaneLine.SetParent(parentPanel);
@@ -37,7 +37,7 @@ public class StarLaneLine : MonoBehaviour
         Color color = new Color(0.3f, 0.4f, 0.9f, 0.8f);
 
         me = new GameObject();
-        GameObject parentPanel = GameObject.Find("MapPanel");
+        GameObject parentPanel = GameObject.Find("Map Panel");
         me.name = "starlane-" + planet1.Name() + "-" + planet2.Name();
         // Add a Line Renderer to the GameObject
         line = me.AddComponent<LineRenderer>();
