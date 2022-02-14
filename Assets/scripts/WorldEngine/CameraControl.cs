@@ -5,34 +5,51 @@ using System;
 
 public class CameraControl : MonoBehaviour
 {
-    public Camera cam;
+    public Camera mainCamera; // Set from UI.
+
+    private GameObject controlCamera;
+    private GameObject mapCamera;
     
     public float ctrlZoomSensitivity = 10F;
     public float mouseSensitivity = 1;
     public float speed = 300;
-    public float currentSize;
-    float targetZoom;
 
-    private Transform baseTransform;
-    private float camMaxSize;
-    private float camMinSize;
+    private float mapCameraMaxSize;
+    private float mapCameraMinSize;
 
     private float slide;
     private float width;
     private float height;
 
-    private GameObject controlCamera;
+
+
+    private float zoomBuffer;
+
+    void Start () {
+        this.zoomBuffer = 0;
+
+        // Used in camera construction
+        this.slide = 0.8F;
+        this.width = mainCamera.pixelRect.width;
+        this.height = mainCamera.pixelRect.height;
+
+        this.CreateControlCamera(this.mainCamera);
+        this.CreateMapCamera(this.mainCamera);
+
+        this.mapCameraMinSize = 100F;
+        this.mapCameraMaxSize = this.mapCamera.GetComponent<Camera>().orthographicSize;
+    }
 
     void OnGUI()
     {
         Event e = Event.current;
         if (e.type == EventType.KeyDown && e.control && e.keyCode == KeyCode.Equals) {
-            this.AdjustCameraZoom(ctrlZoomSensitivity);
+            zoomBuffer += ctrlZoomSensitivity;
             //Debug.Log("Ctrl Zoom in!");
         }
         
         if (e.type == EventType.KeyDown && e.control && e.keyCode == KeyCode.Minus) {
-            this.AdjustCameraZoom(-1 * ctrlZoomSensitivity);
+            zoomBuffer -= ctrlZoomSensitivity;
             //Debug.Log("Ctrl Zoom Out!");
         }
     }
@@ -41,75 +58,57 @@ public class CameraControl : MonoBehaviour
     {
         if(Input.mouseScrollDelta.y != 0) {
             //Debug.Log("Mouth scroll is: " + Input.mouseScrollDelta.y);
-            targetZoom -= Input.mouseScrollDelta.y * mouseSensitivity;
-            this.AdjustCameraZoom(targetZoom);
+            zoomBuffer -= Input.mouseScrollDelta.y * mouseSensitivity;
         }
-        cam.orthographicSize = currentSize;
+
+        if(zoomBuffer != 0) {
+            AdjustMapCameraZoom(zoomBuffer);
+            zoomBuffer = 0;
+        }
     }
 
-    void Start () {
-        camMinSize = 100F;
-        camMaxSize = cam.orthographicSize;
-        currentSize = cam.orthographicSize;
-        baseTransform = cam.transform;
-
-        this.slide = 0.8F;
-        this.width = cam.pixelRect.width;
-        this.height = cam.pixelRect.height;
-    }
-
-    private void AdjustCameraZoom(float amount) {
+    private void AdjustMapCameraZoom(float amount) {
         float adjustedAmount = Mathf.Clamp(amount, -20F, 20F);
         float newSize = 0.0F;
+        Camera mapCameraComponent = this.mapCamera.GetComponent<Camera>();
         if(amount > 0) {
-            newSize = Mathf.MoveTowards(cam.orthographicSize, camMinSize, speed * amount * Time.deltaTime);
+            newSize = Mathf.MoveTowards(mapCameraComponent.orthographicSize, this.mapCameraMinSize, speed * amount * Time.deltaTime);
             //Debug.Log("Zoom in new size: " + newSize);
         } else {
-            newSize = Mathf.MoveTowards(cam.orthographicSize, camMaxSize, -1 * speed * amount * Time.deltaTime);
+            newSize = Mathf.MoveTowards(mapCameraComponent.orthographicSize, this.mapCameraMaxSize, -1 * speed * amount * Time.deltaTime);
             //Debug.Log("Zoom out new size: " + newSize);
         }
 
-        if(currentSize == camMaxSize && newSize < currentSize) {
-            // Apply Camera Transform
-            this.AdjustCameraTransform(true);
-        } else if(newSize == camMaxSize && newSize > currentSize) {
-            // Unapply Camera Transform
-            this.AdjustCameraTransform(false);
-        }
-        currentSize = newSize;
+        mapCameraComponent.orthographicSize = newSize;
     }
 
-    private void AdjustCameraTransform(bool isAdjust) {
-        int direction = -1;
-        if(isAdjust) {
+    private void CreateControlCamera(Camera baseCamera) {
+        GameObject controlCameraObject = new GameObject();
+        //controlCameraObject.transform.position = new Vector3(0F,0F,0F);
+        controlCameraObject.name = "Control Panel Camera";
+        Camera camera = controlCameraObject.AddComponent<Camera>();
+        camera.CopyFrom(baseCamera);
+        camera.pixelRect = new Rect(0, 0, (1 - this.slide)*this.width, this.height);
+        camera.transform.SetParent(GameObject.Find("Control Panel").transform);
+        float z = controlCameraObject.transform.localPosition.z;
+        controlCameraObject.transform.localPosition = new Vector3(0,0,z);
 
-            // Create a second camera on the control panel
-            GameObject cameraGameObject = new GameObject();
-            cameraGameObject.transform.position = new Vector3(0F,0F,0F);
-            cameraGameObject.name = "Control Panel Camera";
-            Camera camera = cameraGameObject.AddComponent<Camera>();
-            camera.CopyFrom(this.cam);
-            camera.pixelRect = new Rect(0, 0, (1 - this.slide)*this.width, this.height);
-            camera.transform.SetParent(GameObject.Find("Control Panel").transform);
-            float z = cameraGameObject.transform.localPosition.z;
-            cameraGameObject.transform.localPosition = new Vector3(0,0,z);
+        controlCameraObject.SetActive(true);
+        this.controlCamera = controlCameraObject;
+    }
 
-            cameraGameObject.SetActive(true);
-            this.controlCamera = cameraGameObject;
-            //
+    private void CreateMapCamera(Camera baseCamera) {
+        GameObject mapCameraObject = new GameObject();
+        //controlCameraObject.transform.position = new Vector3(0F,0F,0F);
+        mapCameraObject.name = "Map Panel Camera";
+        Camera camera = mapCameraObject.AddComponent<Camera>();
+        camera.CopyFrom(baseCamera);
+        camera.pixelRect = new Rect((1 - this.slide)*this.width, 0, this.slide*this.width, this.height);
+        camera.transform.SetParent(GameObject.Find("MapPanel").transform);
+        float z = mapCameraObject.transform.localPosition.z;
+        mapCameraObject.transform.localPosition = new Vector3(0,0,z);
 
-            direction = 1;
-            cam.pixelRect = new Rect((1 - this.slide)*this.width, 0, this.slide*this.width, this.height);
-
-        } else {
-            // Destroy secondary camera
-            Destroy(this.controlCamera);
-            this.controlCamera = null;
-            //
-
-            cam.pixelRect = new Rect(0,0,this.width, this.height);
-
-        }
-        cam.transform.Translate(new Vector3(direction * 0.25F*(1 - this.slide)*this.width, 0, 0), Space.World);
+        mapCameraObject.SetActive(true);
+        this.mapCamera = mapCameraObject;
     }
 }

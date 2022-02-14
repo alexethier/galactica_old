@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 472595099}
   - component: {fileID: 472595098}
   - component: {fileID: 472595097}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Planet Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -324,7 +324,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -409,10 +409,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df1ae153c241f42a0a7ee2c5e830a6a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 519420031}
-  maxZoom: 5
-  minZoom: 20
-  sensitivity: 1
+  mainCamera: {fileID: 519420031}
+  ctrlZoomSensitivity: 10
+  mouseSensitivity: 1
   speed: 30
 --- !u!1 &521924084
 GameObject:
@@ -425,7 +424,7 @@ GameObject:
   - component: {fileID: 521924085}
   - component: {fileID: 521924087}
   - component: {fileID: 521924086}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Map Button Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -561,7 +560,7 @@ GameObject:
   - component: {fileID: 1208283165}
   - component: {fileID: 1208283164}
   - component: {fileID: 1208283163}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Map Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -682,7 +681,7 @@ GameObject:
   - component: {fileID: 1232575888}
   - component: {fileID: 1232575890}
   - component: {fileID: 1232575889}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Planet Button Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -894,7 +893,7 @@ GameObject:
   - component: {fileID: 1539398575}
   - component: {fileID: 1539398574}
   - component: {fileID: 1539398573}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: End Turn Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1129,7 +1128,7 @@ GameObject:
   - component: {fileID: 1892588985}
   - component: {fileID: 1892588987}
   - component: {fileID: 1892588986}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Control Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1208,7 +1207,7 @@ GameObject:
   - component: {fileID: 1899231174}
   - component: {fileID: 1899231176}
   - component: {fileID: 1899231175}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: MapPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1285,7 +1284,7 @@ GameObject:
   - component: {fileID: 1957196151}
   - component: {fileID: 1957196153}
   - component: {fileID: 1957196152}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: End Turn Buton Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1421,7 +1420,7 @@ GameObject:
   - component: {fileID: 1997914645}
   - component: {fileID: 1997914644}
   - component: {fileID: 1997914646}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Resources Label Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
