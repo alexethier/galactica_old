@@ -11,7 +11,7 @@ public class CameraControl : MonoBehaviour
     private GameObject mapCamera;
     
     public float ctrlZoomSensitivity = 10F;
-    public float mouseSensitivity = 1;
+    public float mouseSensitivity = 10;
     public float speed = 300;
 
     private float mapCameraMaxSize;
@@ -33,8 +33,9 @@ public class CameraControl : MonoBehaviour
         this.width = mainCamera.pixelRect.width;
         this.height = mainCamera.pixelRect.height;
 
-        this.CreateControlCamera(this.mainCamera);
+        //this.CreateControlCamera(this.mainCamera);
         this.CreateMapCamera(this.mainCamera);
+        this.controlCamera = this.CreateCamera(this.mainCamera, GameObject.Find("Control Panel"));
 
         this.mapCameraMinSize = 100F;
         this.mapCameraMaxSize = this.mapCamera.GetComponent<Camera>().orthographicSize;
@@ -82,14 +83,30 @@ public class CameraControl : MonoBehaviour
         mapCameraComponent.orthographicSize = newSize;
     }
 
+    private GameObject CreateCamera(Camera baseCamera, GameObject parent) {
+        GameObject controlCameraObject = new GameObject();
+        controlCameraObject.name = "Control Panel Camera";
+        Camera camera = controlCameraObject.AddComponent<Camera>();
+        camera.CopyFrom(baseCamera);
+        camera.pixelRect = parent.GetComponent<RectTransform>().rect;
+        camera.transform.SetParent(parent.transform);
+        float z = controlCameraObject.transform.localPosition.z;
+        controlCameraObject.transform.localPosition = new Vector3(0,0,z);
+
+        controlCameraObject.SetActive(true);
+        return controlCameraObject;
+    }
+
     private void CreateControlCamera(Camera baseCamera) {
+        GameObject controlPanel = GameObject.Find("Control Panel");
+
         GameObject controlCameraObject = new GameObject();
         //controlCameraObject.transform.position = new Vector3(0F,0F,0F);
         controlCameraObject.name = "Control Panel Camera";
         Camera camera = controlCameraObject.AddComponent<Camera>();
         camera.CopyFrom(baseCamera);
         camera.pixelRect = new Rect(0, 0, (1 - this.slide)*this.width, this.height);
-        camera.transform.SetParent(GameObject.Find("Control Panel").transform);
+        camera.transform.SetParent(controlPanel.transform);
         float z = controlCameraObject.transform.localPosition.z;
         controlCameraObject.transform.localPosition = new Vector3(0,0,z);
 

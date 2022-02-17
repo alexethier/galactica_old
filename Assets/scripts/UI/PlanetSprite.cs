@@ -9,11 +9,11 @@ public class PlanetSprite : MonoBehaviour {
     //public Sprite sprite;
 
     private GameObject me;
-    private string objectName;
+    public string objectName;
     private Vector3 position;
     private Planet planet;
     private GameObject planetText;
-    private Color textColor;
+    public Color textColor;
 
     public static PlanetSprite Create(Planet planet) {
         GameObject parentPanel = GameObject.Find("Map Panel");
@@ -51,9 +51,6 @@ public class PlanetSprite : MonoBehaviour {
         return me;
     }
 
-    private static string BASE_PLANET_DIRPATH = "Assets/Resources/sprites/planets";
-    private static int BASE_PLANET_COUNT = 1;
-
     // Use this for initialization
     void Start () {
 
@@ -62,7 +59,20 @@ public class PlanetSprite : MonoBehaviour {
             me.name = objectName;
         }
 
-        GameObject parentPanel = GameObject.Find("Map Panel");
+        this.AddImage();
+        this.ConfigureRectTransform(); // Must be called after AddImage for unknown reasons
+        this.AddText(me);
+        this.AddCollider();
+
+        me.SetActive(true); //Activate the GameObject
+    }
+
+    private static string BASE_PLANET_DIRPATH = "Assets/Resources/sprites/planets";
+    private static int BASE_PLANET_COUNT = 1;
+
+    private void AddImage() {
+        // Note that adding an image creates a RectTransform which is used by later scripts.
+        // So this setup method must be called first.
         string countStr = "" + BASE_PLANET_COUNT;
         if(BASE_PLANET_COUNT < 10) {
             countStr = "0" + BASE_PLANET_COUNT;
@@ -72,7 +82,11 @@ public class PlanetSprite : MonoBehaviour {
         BASE_PLANET_COUNT++;
 
         Image newImage = me.AddComponent<Image>(); //Add the Image Component script
-        newImage.sprite = sprite; //Set the Sprite of the Image Component on the new GameObject
+        newImage.sprite = sprite; //Set the Sprite of the Image Component on the new GameObject        
+    }
+
+    private void ConfigureRectTransform() {
+        GameObject parentPanel = GameObject.Find("Map Panel");
 
         RectTransform rectTransform = me.GetComponent<RectTransform>();
         rectTransform.SetParent(parentPanel.transform); //Assign the newly created Image GameObject as a Child of the Parent Panel.
@@ -85,10 +99,14 @@ public class PlanetSprite : MonoBehaviour {
         rectTransform.localPosition = new Vector3((position.x-0.5F)*parentWidth, (position.y-0.5F)*parentHeight, 0);
 
         rectTransform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
+    }
 
-        this.AddText(me);
+    private void AddCollider() {
+        CollisionDetector detector = me.AddComponent<CollisionDetector>();
+        detector.SetParent(this);
+        SphereCollider sphereCollider = me.AddComponent<SphereCollider>();
+        sphereCollider.radius = 50;
 
-        me.SetActive(true); //Activate the GameObject
     }
 
     private void AddText(GameObject parent) {
@@ -103,5 +121,23 @@ public class PlanetSprite : MonoBehaviour {
         //planetText.AddComponent<Text>().text = planet.Name();
         //planetText.GetComponent<Text>().font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
         planetText.transform.localPosition = new Vector3(0,-100,0);
+    }
+
+    public void OnMouseEnter() {
+        Debug.Log("Planet Highlighted.");
+
+        RectTransform rectTransform = me.GetComponent<RectTransform>();
+        rectTransform.localScale = new Vector3(0.3F, 0.3F, 0.3F);
+    }
+
+    public void OnMouseExit() {
+        Debug.Log("Planet Unhighlighted.");
+
+        RectTransform rectTransform = me.GetComponent<RectTransform>();
+        rectTransform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
+    }
+
+    public void OnMouseDown() {
+        Debug.Log("Planet Clicked.");
     }
 }

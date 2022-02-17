@@ -22,7 +22,6 @@ public class GalaxyBuilder
         Dictionary<Planet, (double, double)> initialPlanetPositions = new Dictionary<Planet, (double, double)>();
 
         // First create a square grid
-        int LENGTH = 6;
         int orientation = 0; // 0 -> right, 1 down, 2 left, 3 up
         int roundCount = 0; // Counter for increasing step size
         double stepSize = 1.0;
@@ -32,7 +31,6 @@ public class GalaxyBuilder
         int x = 0;
         int y = 0;
 
-        int count = 0;
         while(initialPlanetPositions.Count < desiredPlanetCount) {
 
             // TODO: Switch to a hex based map instead of square for a better pattern.

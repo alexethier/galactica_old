@@ -27,11 +27,6 @@ public class Universe
     void Start()
     {
         Debug.Log("Starting Game!");
-        planets = new List<Planet>();
-
-        turnCount = 0;
-        int playerCount = 4;
-        players = new List<Player>();
 
         GalaxyBuilder galaxyBuilder = new GalaxyBuilder();
         galaxyBuilder.Build(20);
@@ -39,6 +34,8 @@ public class Universe
         players = galaxyBuilder.Players();
         planets = galaxyBuilder.Planets();
         mainPlayer = galaxyBuilder.MainPlayer();
+
+        turnCount = 0;
     }
 
     public Player MainPlayer() {
