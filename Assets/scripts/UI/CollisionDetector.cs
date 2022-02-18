@@ -3,25 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class CollisionDetector : MonoBehaviour
+public class CollisionDetector : MonoBehaviour, ICollisionDetector
 {
 
-    private PlanetSprite parent; // Change to interface
+    private ICollisionDetector parent;
 
-    public void SetParent(PlanetSprite obj) {
+    public void SetParent(ICollisionDetector obj) {
         this.parent = obj;
     }
 
-    void OnMouseEnter() {
-        Debug.Log("TODO: Update parent from PlanetSprite to an interface.")
+    public void OnMouseEnter() {
         parent.OnMouseEnter();
     }
 
-    void OnMouseExit() {
+    public void OnMouseExit() {
         parent.OnMouseExit();
     }
 
-    void OnMouseDown() {
+    public void OnMouseDown() {
         parent.OnMouseDown();
     }
+}
+
+public interface ICollisionDetector
+{
+    void OnMouseEnter();
+
+    void OnMouseExit();
+
+    void OnMouseDown();
 }

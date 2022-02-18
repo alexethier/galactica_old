@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class PlanetSprite : MonoBehaviour {
+public class PlanetSprite : MonoBehaviour, ICollisionDetector {
 
     //public GameObject ParentPanel; //Parent Panel you want the new Images to be children of
     //public Sprite sprite;
@@ -139,5 +139,6 @@ public class PlanetSprite : MonoBehaviour {
 
     public void OnMouseDown() {
         Debug.Log("Planet Clicked.");
+        MainControl.OpenPlanetDetailsPanel(planet);
     }
 }

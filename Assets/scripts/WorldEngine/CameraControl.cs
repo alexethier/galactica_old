@@ -5,6 +5,8 @@ using System;
 
 public class CameraControl : MonoBehaviour
 {
+    public static CameraControl me;
+
     public Camera mainCamera; // Set from UI.
 
     private GameObject controlCamera;
@@ -21,8 +23,6 @@ public class CameraControl : MonoBehaviour
     private float width;
     private float height;
 
-
-
     private float zoomBuffer;
 
     void Start () {
@@ -34,11 +34,14 @@ public class CameraControl : MonoBehaviour
         this.height = mainCamera.pixelRect.height;
 
         //this.CreateControlCamera(this.mainCamera);
-        this.CreateMapCamera(this.mainCamera);
-        this.controlCamera = this.CreateCamera(this.mainCamera, GameObject.Find("Control Panel"));
+        this.mapCamera = this.CreateMapCamera(this.mainCamera);
+        this.controlCamera = this.CreateControlCamera(this.mainCamera);
+        //this.mapCamera = this.CreateCamera(this.mainCamera, "Map Panel Camera", GameObject.Find("Map Panel"));
+        //this.controlCamera = this.CreateCamera(this.mainCamera, "Control Panel Camera", GameObject.Find("Control Panel"));
 
         this.mapCameraMinSize = 100F;
         this.mapCameraMaxSize = this.mapCamera.GetComponent<Camera>().orthographicSize;
+        me = this;
     }
 
     void OnGUI()
@@ -73,19 +76,20 @@ public class CameraControl : MonoBehaviour
         float newSize = 0.0F;
         Camera mapCameraComponent = this.mapCamera.GetComponent<Camera>();
         if(amount > 0) {
-            newSize = Mathf.MoveTowards(mapCameraComponent.orthographicSize, this.mapCameraMinSize, speed * amount * Time.deltaTime);
+            newSize = Mathf.MoveTowards(mapCameraComponent.orthographicSize, mapCameraMinSize, speed * amount * Time.deltaTime);
             //Debug.Log("Zoom in new size: " + newSize);
         } else {
-            newSize = Mathf.MoveTowards(mapCameraComponent.orthographicSize, this.mapCameraMaxSize, -1 * speed * amount * Time.deltaTime);
+            newSize = Mathf.MoveTowards(mapCameraComponent.orthographicSize, mapCameraMaxSize, -1 * speed * amount * Time.deltaTime);
             //Debug.Log("Zoom out new size: " + newSize);
         }
 
         mapCameraComponent.orthographicSize = newSize;
     }
 
-    private GameObject CreateCamera(Camera baseCamera, GameObject parent) {
+    /*
+    private GameObject CreateCamera(Camera baseCamera, string name, GameObject parent) {
         GameObject controlCameraObject = new GameObject();
-        controlCameraObject.name = "Control Panel Camera";
+        controlCameraObject.name = name;
         Camera camera = controlCameraObject.AddComponent<Camera>();
         camera.CopyFrom(baseCamera);
         camera.pixelRect = parent.GetComponent<RectTransform>().rect;
@@ -96,8 +100,23 @@ public class CameraControl : MonoBehaviour
         controlCameraObject.SetActive(true);
         return controlCameraObject;
     }
+    */
 
-    private void CreateControlCamera(Camera baseCamera) {
+    private GameObject CreateMapCamera(Camera baseCamera) {
+        GameObject mapCameraObject = new GameObject();
+        mapCameraObject.name = "Map Panel Camera";
+        Camera camera = mapCameraObject.AddComponent<Camera>();
+        camera.CopyFrom(baseCamera);
+        camera.pixelRect = new Rect((1 - this.slide)*this.width, 0, this.slide*this.width, this.height);
+        camera.transform.SetParent(GameObject.Find("Map Panel").transform);
+        float z = mapCameraObject.transform.localPosition.z;
+        mapCameraObject.transform.localPosition = new Vector3(0,0,z);
+
+        mapCameraObject.SetActive(true);
+        return mapCameraObject;
+    }
+
+    private GameObject CreateControlCamera(Camera baseCamera) {
         GameObject controlPanel = GameObject.Find("Control Panel");
 
         GameObject controlCameraObject = new GameObject();
@@ -111,21 +130,17 @@ public class CameraControl : MonoBehaviour
         controlCameraObject.transform.localPosition = new Vector3(0,0,z);
 
         controlCameraObject.SetActive(true);
-        this.controlCamera = controlCameraObject;
+        return controlCameraObject;
+    }
+    
+
+
+
+    public GameObject MapCamera() {
+        return mapCamera;
     }
 
-    private void CreateMapCamera(Camera baseCamera) {
-        GameObject mapCameraObject = new GameObject();
-        //controlCameraObject.transform.position = new Vector3(0F,0F,0F);
-        mapCameraObject.name = "Map Panel Camera";
-        Camera camera = mapCameraObject.AddComponent<Camera>();
-        camera.CopyFrom(baseCamera);
-        camera.pixelRect = new Rect((1 - this.slide)*this.width, 0, this.slide*this.width, this.height);
-        camera.transform.SetParent(GameObject.Find("Map Panel").transform);
-        float z = mapCameraObject.transform.localPosition.z;
-        mapCameraObject.transform.localPosition = new Vector3(0,0,z);
-
-        mapCameraObject.SetActive(true);
-        this.mapCamera = mapCameraObject;
+    public static void AdjustMapCameraRect(float xOffsetMin, float xOffsetMax, float yOffsetMin, float yOffsetMax) {
+        me.MapCamera().GetComponent<Camera>().pixelRect = new Rect((1 - me.slide)*me.width + xOffsetMin, 0 + yOffsetMin, me.slide*me.width + xOffsetMax, me.height + yOffsetMax);
     }
 }
